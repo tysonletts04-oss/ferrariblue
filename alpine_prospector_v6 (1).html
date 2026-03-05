@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alpine Capital — Deal Origination Prospector</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--dk:#002C32;--or:#FD6826;--wh:#FFFFFF;--lg:#F3F3F4;--bk:#000000;
+--dk-l:#003d45;--dk-ll:#004d58;
+--or-d:rgba(253,104,38,0.12);--or-s:rgba(253,104,38,0.06);--or-g:rgba(253,104,38,0.25);
+--t-on:rgba(255,255,255,0.85);--t-m:rgba(255,255,255,0.45);--t-s:rgba(255,255,255,0.6);
+--bd:rgba(255,255,255,0.08);--bd-a:rgba(253,104,38,0.3);
+--t1:#FD6826;--t1b:rgba(253,104,38,0.12);
+--t2:#F5B731;--t2b:rgba(245,183,49,0.1);
+--t3:#4ECDC4;--t3b:rgba(78,205,196,0.1);
+--r:8px;--rs:5px;--rp:50px;--f:'Cabin',-apple-system,sans-serif}
+html{scroll-behavior:smooth}
+body{font-family:var(--f);font-weight:500;background:var(--dk);color:var(--t-on);min-height:100vh;-webkit-font-smoothing:antialiased}
+.alpine-logo{display:flex;align-items:center;gap:12px}
+.alpine-logo svg{width:38px;height:38px}
+.alpine-logo-text{font-size:16px;font-weight:700;letter-spacing:2.5px;color:var(--or);text-transform:uppercase}
+.header{position:relative;background:var(--dk);border-bottom:1px solid var(--bd);padding:28px 40px 22px;overflow:hidden}
+.header::after{content:'';position:absolute;right:-60px;top:-40px;width:360px;height:360px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='90' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='5'/%3E%3Cpolygon points='100,35 155,140 45,140' fill='rgba(255,255,255,0.02)'/%3E%3Cpolygon points='100,65 120,110 80,110' fill='none' stroke='rgba(255,255,255,0.025)' stroke-width='2'/%3E%3C/svg%3E") no-repeat center;background-size:contain;pointer-events:none}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;position:relative;z-index:1}
+.header-left{max-width:600px}
+.header h1{font-size:28px;font-weight:700;color:var(--wh);letter-spacing:0.5px;margin-top:12px;opacity:0;animation:fsu .5s ease .1s forwards}
+.header h1 span{color:var(--or)}
+.header-desc{font-size:13px;font-weight:400;color:var(--t-s);margin-top:8px;line-height:1.65;opacity:0;animation:fsu .5s ease .2s forwards}
+.nav-tabs{display:flex;gap:6px}
+.nav-tab{font-family:var(--f);font-weight:600;padding:8px 18px;border-radius:var(--rs);border:1px solid var(--bd);background:0 0;color:var(--t-s);cursor:pointer;font-size:12px;transition:all .2s}
+.nav-tab:hover{border-color:rgba(255,255,255,0.2);color:var(--t-on)}
+.nav-tab.active{border-color:var(--or);background:var(--or-d);color:var(--or)}
+.stats-row{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap;position:relative;z-index:1;opacity:0;animation:fsu .5s ease .3s forwards}
+.stat-card{background:rgba(255,255,255,0.03);border:1px solid var(--bd);border-radius:var(--r);padding:12px 20px;min-width:150px;transition:transform .2s,border-color .2s}
+.stat-card:hover{transform:translateY(-1px);border-color:rgba(255,255,255,0.15)}
+.stat-card.t1{border-left:3px solid var(--t1)}.stat-card.t2{border-left:3px solid var(--t2)}.stat-card.t3{border-left:3px solid var(--t3)}
+.stat-num{font-size:26px;font-weight:700}
+.stat-card.t1 .stat-num{color:var(--t1)}.stat-card.t2 .stat-num{color:var(--t2)}.stat-card.t3 .stat-num{color:var(--t3)}
+.stat-label{font-size:11px;color:var(--t-m);margin-top:2px}
+.filter-bar{padding:14px 40px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--bd);background:rgba(0,0,0,0.15);position:relative;z-index:1}
+.search-input{font-family:var(--f);font-weight:500;background:rgba(255,255,255,0.06);border:1px solid var(--bd);border-radius:var(--rs);padding:8px 14px 8px 34px;color:var(--t-on);font-size:13px;width:220px;outline:0;transition:border-color .2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:10px center}
+.search-input:focus{border-color:var(--or)}.search-input::placeholder{color:var(--t-m)}
+.pill-group{display:flex;gap:4px;flex-wrap:wrap}.pill-group.right{margin-left:auto}
+.pill-btn{font-family:var(--f);font-weight:500;padding:5px 13px;border-radius:var(--rp);border:1px solid var(--bd);background:0 0;color:var(--t-s);cursor:pointer;font-size:11px;transition:all .15s;white-space:nowrap}
+.pill-btn:hover{border-color:rgba(255,255,255,0.2);color:var(--t-on)}
+.pill-btn.active,.pill-btn.tier-active{border-color:var(--or);background:var(--or-d);color:var(--or)}
+.leads-container{padding:16px 40px 50px;position:relative;z-index:1}
+.lead-card{background:rgba(255,255,255,0.025);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:6px;transition:all .2s;overflow:hidden;opacity:0;animation:fi .4s ease forwards}
+.lead-card:hover{background:rgba(255,255,255,0.04)}
+.lead-card.t1{border-left:3px solid var(--t1)}.lead-card.t2{border-left:3px solid var(--t2)}.lead-card.t3{border-left:3px solid var(--t3)}
+.lead-card.expanded{background:rgba(255,255,255,0.045);border-color:var(--bd-a)}
+.lead-header{padding:14px 18px;cursor:pointer;display:flex;align-items:center;gap:14px;user-select:none}
+.lead-info{flex:1;min-width:0}
+.lead-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.lead-name{font-size:15px;font-weight:700;color:var(--wh)}
+.lead-ticker{font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--or);background:var(--or-d);padding:2px 8px;border-radius:4px}
+.lead-tier-badge{font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:4px}
+.lead-tier-badge.t1{color:var(--t1);background:var(--t1b)}.lead-tier-badge.t2{color:var(--t2);background:var(--t2b)}.lead-tier-badge.t3{color:var(--t3);background:var(--t3b)}
+.lead-meta{display:flex;gap:16px;margin-top:4px;font-size:12px;font-weight:400;color:var(--t-s)}
+.urgency-badge{padding:4px 12px;border-radius:var(--rp);font-size:10px;font-weight:700;white-space:nowrap}
+.urgency-badge.immediate{color:var(--t1);background:var(--t1b)}.urgency-badge.this_quarter{color:var(--t2);background:var(--t2b)}.urgency-badge.this_half{color:var(--t3);background:var(--t3b)}
+.save-btn{background:0 0;border:0;cursor:pointer;font-size:20px;color:var(--t-m);padding:4px;transition:color .15s,transform .15s}
+.save-btn:hover{transform:scale(1.15)}.save-btn.saved{color:var(--or)}
+.chevron{color:var(--t-m);font-size:14px;transition:transform .25s}.lead-card.expanded .chevron{transform:rotate(180deg)}
+.lead-detail{display:none;padding:0 18px 18px;border-top:1px solid var(--bd)}.lead-card.expanded .lead-detail{display:block}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+@media(max-width:700px){.detail-grid{grid-template-columns:1fr}}
+.detail-box{padding:14px 16px;border-radius:var(--r);font-size:13px;font-weight:400;line-height:1.65;color:rgba(255,255,255,0.75)}
+.detail-box.signal{background:var(--or-s);border:1px solid rgba(253,104,38,0.12)}
+.detail-box.angle{background:rgba(78,205,196,0.04);border:1px solid rgba(78,205,196,0.12)}
+.detail-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.detail-box.signal .detail-label{color:var(--or)}.detail-box.angle .detail-label{color:var(--t3)}
+.detail-status{font-weight:700;color:var(--or)}
+.detail-footer{margin-top:12px;display:flex;flex-wrap:wrap;gap:20px;font-size:12px;color:var(--t-s)}
+.detail-footer a{color:var(--or);text-decoration:none}.detail-footer a:hover{text-decoration:underline}
+.contact-box{margin-top:12px;padding:12px 16px;border-radius:var(--r);background:rgba(255,255,255,0.03);border:1px solid var(--bd);font-size:12px;color:var(--t-s);line-height:1.7}
+.contact-box .detail-label{color:var(--or);margin-bottom:4px}
+.contact-name{font-weight:700;color:var(--t-on)}
+.contact-email{color:var(--or)}
+.insights-container{padding:28px 40px;max-width:840px;position:relative;z-index:1}
+.insights-container h2{font-size:22px;font-weight:700;color:var(--wh);margin-bottom:20px}
+.insight-card{background:rgba(255,255,255,0.03);border:1px solid var(--bd);border-radius:var(--r);padding:18px 22px;margin-bottom:10px;transition:border-color .2s;opacity:0;animation:fi .5s ease forwards}
+.insight-card:hover{border-color:rgba(253,104,38,0.2)}
+.insight-title{font-size:14px;font-weight:700;color:var(--or);margin-bottom:8px}
+.insight-body{font-size:13px;font-weight:400;line-height:1.7;color:var(--t-s)}
+.empty-state{text-align:center;padding:80px 20px;color:var(--t-m);font-size:14px}
+.footer{padding:20px 40px 28px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:relative;z-index:1}
+.footer-text{font-size:10px;color:var(--t-m)}.footer-link{font-size:11px;color:var(--or);text-decoration:none;font-weight:600}.footer-link:hover{text-decoration:underline}
+.orange-bar{height:3px;background:linear-gradient(90deg,var(--or) 0%,rgba(253,104,38,0.1) 100%)}
+@keyframes fsu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.lead-card:nth-child(1){animation-delay:0s}.lead-card:nth-child(2){animation-delay:.03s}.lead-card:nth-child(3){animation-delay:.06s}.lead-card:nth-child(4){animation-delay:.09s}.lead-card:nth-child(5){animation-delay:.12s}.lead-card:nth-child(6){animation-delay:.15s}.lead-card:nth-child(7){animation-delay:.18s}.lead-card:nth-child(8){animation-delay:.21s}.lead-card:nth-child(9){animation-delay:.24s}.lead-card:nth-child(10){animation-delay:.27s}
+.insight-card:nth-child(2){animation-delay:.05s}.insight-card:nth-child(3){animation-delay:.1s}.insight-card:nth-child(4){animation-delay:.15s}.insight-card:nth-child(5){animation-delay:.2s}.insight-card:nth-child(6){animation-delay:.25s}.insight-card:nth-child(7){animation-delay:.3s}
+@media(max-width:768px){.header,.filter-bar,.leads-container,.insights-container,.footer{padding-left:20px;padding-right:20px}.header h1{font-size:22px}.search-input{width:100%}.pill-group.right{margin-left:0}.lead-meta{gap:8px;font-size:11px}.stats-row{gap:6px}.stat-card{min-width:110px;padding:10px 14px}.stat-num{font-size:20px}.nav-tabs{flex-wrap:wrap}}
+
+/* CSV Import */
+.csv-drop-zone{margin:16px 40px 0;border:1.5px dashed rgba(253,104,38,0.35);border-radius:var(--r);padding:13px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s;background:rgba(253,104,38,0.03);position:relative;z-index:2}
+.csv-drop-zone:hover,.csv-drop-zone.drag-over{border-color:var(--or);background:rgba(253,104,38,0.08)}
+.csv-drop-zone.drag-over{transform:scale(1.01)}
+.csv-icon{font-size:22px;flex-shrink:0}
+.csv-text{flex:1;font-size:12px;color:var(--t-s)}
+.csv-text strong{color:var(--or);font-weight:700}
+.csv-text span{color:var(--t-m);font-size:11px;display:block;margin-top:2px}
+.csv-file-input{display:none}
+.csv-status{font-size:11px;font-weight:600;padding:4px 12px;border-radius:var(--rp);white-space:nowrap}
+.csv-status.ok{color:#4ECDC4;background:rgba(78,205,196,0.1)}
+.csv-status.err{color:#ff6b7a;background:rgba(255,68,85,0.08)}
+.csv-status.loading{color:var(--t2);background:rgba(245,183,49,0.1)}
+.csv-clear-btn{background:0 0;border:1px solid rgba(255,255,255,0.1);border-radius:var(--rs);color:var(--t-m);font-size:10px;font-weight:600;padding:4px 10px;cursor:pointer;transition:all .15s;font-family:var(--f)}
+.csv-clear-btn:hover{border-color:rgba(255,68,85,0.4);color:#ff6b7a}
+@media(max-width:768px){.csv-drop-zone{margin:12px 20px 0}}
+
+.winprob-container{padding:28px 40px;max-width:960px;position:relative;z-index:1}
+.winprob-container h2{font-size:22px;font-weight:700;color:var(--wh);margin-bottom:6px}
+.winprob-subtitle{font-size:13px;color:var(--t-s);margin-bottom:20px;line-height:1.65}
+.wp-method{background:rgba(255,255,255,0.03);border:1px solid var(--bd);border-radius:var(--r);padding:16px 20px;margin-bottom:20px}
+.wp-method-title{font-size:12px;font-weight:700;color:var(--or);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.wp-factors{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.wp-factor{font-size:11px;padding:3px 10px;border-radius:var(--rp);border:1px solid var(--bd);color:var(--t-s)}
+.wp-factor .wt{color:var(--or);font-weight:700;margin-left:4px}
+.wp-note{font-size:11px;color:var(--t-m);margin-top:8px;font-style:italic}
+.wp-card{background:rgba(255,255,255,0.025);border:1px solid var(--bd);border-radius:var(--r);padding:14px 18px;margin-bottom:6px;display:flex;align-items:center;gap:16px;transition:all .2s;opacity:0;animation:fi .4s ease forwards}
+.wp-card:hover{background:rgba(255,255,255,0.04)}
+.wp-rank{font-size:22px;font-weight:700;color:var(--t-m);min-width:32px;text-align:center}
+.wp-info{flex:1;min-width:0}
+.wp-name{font-size:14px;font-weight:700;color:var(--wh)}
+.wp-ticker{font-size:10px;font-weight:700;color:var(--or);background:var(--or-d);padding:2px 7px;border-radius:4px;margin-left:8px}
+.wp-meta{font-size:11px;color:var(--t-s);margin-top:3px}
+.wp-score-area{display:flex;align-items:center;gap:12px;min-width:200px}
+.wp-bar-track{flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden}
+.wp-bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+.wp-pct{font-size:16px;font-weight:700;min-width:48px;text-align:right}
+.wp-breakdown{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.wp-tag{font-size:9px;padding:2px 7px;border-radius:var(--rp);color:var(--t-s)}
+.wp-tag.pos{background:rgba(78,205,196,0.1);color:#4ECDC4}
+.wp-tag.neg{background:rgba(255,68,85,0.08);color:#ff6b7a}
+.wp-tag.neu{background:rgba(245,183,49,0.08);color:#F5B731}
+.wp-card:nth-child(2){animation-delay:.02s}.wp-card:nth-child(3){animation-delay:.04s}.wp-card:nth-child(4){animation-delay:.06s}.wp-card:nth-child(5){animation-delay:.08s}.wp-card:nth-child(6){animation-delay:.1s}.wp-card:nth-child(7){animation-delay:.12s}.wp-card:nth-child(8){animation-delay:.14s}.wp-card:nth-child(9){animation-delay:.16s}.wp-card:nth-child(10){animation-delay:.18s}.wp-card:nth-child(11){animation-delay:.2s}.wp-card:nth-child(12){animation-delay:.22s}
+
+.pitch-container{padding:28px 40px;max-width:960px;position:relative;z-index:1}
+.pitch-container h2{font-size:22px;font-weight:700;color:var(--wh);margin-bottom:6px}
+.pitch-subtitle{font-size:13px;color:var(--t-s);margin-bottom:20px;line-height:1.65}
+.pitch-select-bar{display:flex;gap:10px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
+.pitch-select{font-family:var(--f);font-weight:500;background:rgba(255,255,255,0.06);border:1px solid var(--bd);border-radius:var(--rs);padding:9px 14px;color:var(--t-on);font-size:13px;outline:0;min-width:260px;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:calc(100% - 12px) center}
+.pitch-select:focus{border-color:var(--or)}
+.pitch-select option{background:var(--dk);color:var(--t-on)}
+.pitch-regen-btn{font-family:var(--f);font-weight:600;padding:8px 18px;border-radius:var(--rs);border:1px solid var(--or);background:var(--or-d);color:var(--or);cursor:pointer;font-size:12px;transition:all .2s}
+.pitch-regen-btn:hover{background:var(--or);color:var(--wh)}
+.pitch-email{background:rgba(255,255,255,0.03);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;animation:fi .4s ease forwards}
+.pitch-email-header{padding:14px 20px;border-bottom:1px solid var(--bd);background:rgba(0,0,0,0.15)}
+.pitch-field{display:flex;gap:8px;align-items:baseline;margin-bottom:6px;font-size:13px}
+.pitch-field-label{color:var(--t-m);min-width:60px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.pitch-field-value{color:var(--t-on);font-weight:500}
+.pitch-subject{color:var(--or);font-weight:700;font-size:14px}
+.pitch-email-body{padding:20px 24px;font-size:13.5px;line-height:1.8;color:rgba(255,255,255,0.78);white-space:pre-wrap;font-weight:400}
+.pitch-email-body strong{color:var(--or);font-weight:700}
+.pitch-actions{display:flex;gap:8px;margin-top:16px;padding:14px 20px;border-top:1px solid var(--bd)}
+.pitch-copy-btn{font-family:var(--f);font-weight:600;padding:8px 22px;border-radius:var(--rs);border:none;background:var(--or);color:var(--wh);cursor:pointer;font-size:12px;transition:all .15s}
+.pitch-copy-btn:hover{opacity:.85;transform:translateY(-1px)}
+.pitch-copy-btn.copied{background:#4ECDC4}
+.pitch-tip{margin-top:16px;background:rgba(78,205,196,0.04);border:1px solid rgba(78,205,196,0.12);border-radius:var(--r);padding:14px 18px;font-size:12px;color:rgba(255,255,255,0.6);line-height:1.7}
+.pitch-tip-title{font-weight:700;color:#4ECDC4;margin-bottom:4px;font-size:11px;letter-spacing:1px;text-transform:uppercase}
+.pitch-empty{text-align:center;padding:60px 20px;color:var(--t-m);font-size:14px}
+</style>
+</head>
+<body>
+<div class="orange-bar"></div>
+<header class="header">
+<div class="header-top">
+<div class="header-left">
+<div class="alpine-logo">
+<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="40" cy="40" r="36" stroke="#FD6826" stroke-width="4" fill="none"/><polygon points="40,22 58,56 22,56" fill="#FD6826"/><polygon points="40,34 47,48 33,48" fill="#002C32"/></svg>
+<span class="alpine-logo-text">Alpine Capital</span>
+</div>
+<h1>Deal Origination <span>Prospector</span></h1>
+<p class="header-desc" id="header-desc"></p>
+</div>
+<nav class="nav-tabs" id="nav-tabs">
+<button class="nav-tab active" data-view="leads">All Leads</button>
+<button class="nav-tab" data-view="saved">Saved (<span id="saved-count">0</span>)</button>
+<button class="nav-tab" data-view="insights">Market Intel</button>
+<button class="nav-tab" data-view="winprob">Win Probability</button>
+<button class="nav-tab" data-view="pitch">Email Pitch</button>
+</nav>
+</div>
+<div class="stats-row" id="stats-row"></div>
+<div class="csv-drop-zone" id="csv-drop-zone">
+  <svg class="csv-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px;flex-shrink:0"><path d="M12 16V8M12 8L9 11M12 8L15 11" stroke="#FD6826" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 15V17C3 18.1046 3.89543 19 5 19H19C20.1046 19 21 18.1046 21 17V15" stroke="rgba(255,255,255,0.35)" stroke-width="1.8" stroke-linecap="round"/></svg>
+  <div class="csv-text">
+    <strong>Drop AusIQ CSV here to update leads</strong>
+    <span>Tiers, sectors &amp; contacts auto-read from financial data · AI writes signal &amp; outreach for each lead</span>
+  </div>
+  <span class="csv-status loading" id="csv-status" style="display:none"></span>
+  <button class="csv-clear-btn" id="csv-clear-btn" style="display:none">✕ Reset to default</button>
+  <input type="file" class="csv-file-input" id="csv-file-input" accept=".csv">
+</div>
+</header>
+<div class="filter-bar" id="filter-bar">
+<input class="search-input" id="search-input" type="text" placeholder="Search company or ticker…">
+<div class="pill-group" id="sector-pills"></div>
+<div class="pill-group right" id="tier-pills"></div>
+</div>
+<main class="leads-container" id="leads-container"></main>
+<main class="insights-container" id="insights-container" style="display:none"></main>
+<main class="winprob-container" id="winprob-container" style="display:none"></main>
+<main class="pitch-container" id="pitch-container" style="display:none"></main>
+<footer class="footer">
+<span class="footer-text">Generated March 2026 — Data sourced from ASX announcements, broker research, company websites & filings. Not financial advice. Contact details verified from public sources.</span>
+<a class="footer-link" href="https://www.alpinecapital.au" target="_blank" rel="noopener">www.alpinecapital.au</a>
+</footer>
+<script>
+// ── Leads — populated by CSV drop ───────────────────────────────────────────
+const L=[];
+
+const I_data=[{title:"Small Caps Outperforming",body:"The Small Ordinaries Index rose ~25% in 2025, roughly 2.5x the broader market. Valuations sit near 25-year lows vs large caps. FY26 small-cap earnings growth tracking ~10% vs near-zero for the ASX 200."},{title:"IPO Market Rebounding",body:"2025 saw 92 new ASX listings (up 37% YoY) raising $6.3B in new IPO capital. Average first-day return 15%, year-end return 23%. 2026 pipeline includes Firmus, Greencross, I-Med, Rokt, and Morse Micro."},{title:"Hot Sectors for Capital Raises",body:"Metals & mining dominated at 63% of all 2025 IPOs. Defence (AUKUS), critical minerals (government-backed), AI/data centres, and healthcare remain key themes attracting investor capital into 2026."},{title:"Follow-On Raises Healthy",body:"ASX companies raised $36.7B in follow-on capital in 2025 (up 5% YoY). Total capital quoted was $126.4B — more than double 2024."},{title:"Gold Remains King",body:"Gold trading above AUD $5,000/oz. 4 of the top 5 performing small caps in 2025 were gold companies. Junior gold explorers remain the #1 capital-raising theme on ASX."},{title:"Alpine's Recent Wins",body:"Alpine Capital acted as Joint Lead Manager on Novo Resources' $8.2M placement (Feb 2026), Amaero International's $10M raise, and LTR Pharma's $7M IPO."}];
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+const TI=["All","1","2","3"];
+const UL={immediate:"This Week",this_quarter:"This Quarter",this_half:"This Half"};
+const TL={1:"TIER 1 — ACTIVE",2:"TIER 2 — HIGH PROB",3:"TIER 3 — PIPELINE"};
+// Sector groups — used for filter pills, built dynamically from L
+const SECTOR_GROUPS = {
+  'Gold':['Gold Exploration','Gold Mining','Gold/Silver/Copper'],
+  'Mining/Resources':['Mining/Resources','Metals & Mining'],
+  'Technology':['Technology / AdTech','Semiconductor / IoT','Semiconductor','AI / Data Centres'],
+  'Healthcare/Biotech':['Biotech','MedTech','Agritech / Biotech','Life Sciences','Healthcare'],
+  'Defence':['Defence Tech'],
+  'Energy':['Energy / CSG'],
+  'Consumer':['Consumer / Retail','Consumer / Healthcare'],
+  'Critical Minerals':['Rare Earths','Critical Minerals','Uranium']
+};
+function buildSM() {
+  const seen = new Set(L.map(l => l.sector));
+  const SM = {};
+  for (const [g, subs] of Object.entries(SECTOR_GROUPS)) {
+    if (subs.some(s => seen.has(s))) SM[g] = subs;
+  }
+  return SM;
+}
+
+// ── App state ─────────────────────────────────────────────────────────────────
+let s={view:"leads",sector:"All",tier:"All",search:"",expanded:null,saved:new Set(JSON.parse(localStorage.getItem("ac_s")||"[]"))};
+function ss(){localStorage.setItem("ac_s",JSON.stringify([...s.saved]))}
+
+// ── Filter ────────────────────────────────────────────────────────────────────
+function gf(){
+  const SM = buildSM();
+  return L.filter(l=>{
+    if(s.sector!=="All"&&!(SM[s.sector]||[]).includes(l.sector))return false;
+    if(s.tier!=="All"&&l.tier!==parseInt(s.tier))return false;
+    if(s.search){const q=s.search.toLowerCase();if(!l.company.toLowerCase().includes(q)&&!l.ticker.toLowerCase().includes(q))return false}
+    if(s.view==="saved"&&!s.saved.has(l.id))return false;
+    return true;
+  });
+}
+
+// ── Stats bar ─────────────────────────────────────────────────────────────────
+function rs(){
+  const t1=L.filter(l=>l.tier===1).length,t2=L.filter(l=>l.tier===2).length,t3=L.filter(l=>l.tier===3).length;
+  document.getElementById("stats-row").innerHTML=[
+    {n:t1,l:"Tier 1 — Act Now",c:"t1"},
+    {n:t2,l:"Tier 2 — This Quarter",c:"t2"},
+    {n:t3,l:"Tier 3 — Pipeline",c:"t3"}
+  ].map(x=>`<div class="stat-card ${x.c}"><div class="stat-num">${x.n}</div><div class="stat-label">${x.l}</div></div>`).join("");
+  document.getElementById("header-desc").textContent=L.length?`${L.length} qualified leads — ASX small/mid-cap companies actively seeking or likely to need capital. Drop a new CSV to refresh.`:"Drop your AusIQ CSV above to load leads.";
+}
+
+// ── Sector pills — dynamically built from current data ───────────────────────
+function rsp(){
+  const SM = buildSM();
+  const pills = ['All', ...Object.keys(SM)];
+  document.getElementById("sector-pills").innerHTML=pills.map(x=>`<button class="pill-btn${s.sector===x?" active":""}" data-sector="${x}">${x}</button>`).join("");
+}
+
+function rtp(){document.getElementById("tier-pills").innerHTML=TI.map(t=>`<button class="pill-btn${s.tier===t?" tier-active":""}" data-tier="${t}">${t==="All"?"All Tiers":"Tier "+t}</button>`).join("")}
+function rn(){document.querySelectorAll(".nav-tab").forEach(b=>{b.classList.toggle("active",b.dataset.view===s.view)});document.getElementById("saved-count").textContent=s.saved.size}
+
+// ── Email formatter ───────────────────────────────────────────────────────────
+function fmtEmail(e){
+  if(!e||e.startsWith("via "))return`<span style="color:var(--t-m)">${e||'—'}</span>`;
+  return`<a href="mailto:${e}" class="contact-email">${e}</a>`;
+}
+
+// ── Website formatter — always works ─────────────────────────────────────────
+function fmtWebsite(w){
+  if(!w||w.startsWith("via ")||w==="—")return`<span style="color:var(--t-m)">—</span>`;
+  const url = w.match(/^https?:\/\//) ? w : 'https://' + w;
+  const label = w.replace(/^https?:\/\//,'');
+  return`<a href="${url}" target="_blank" rel="noopener">${label}</a>`;
+}
+
+// ── Lead list render ──────────────────────────────────────────────────────────
+function rl(){
+  const c=document.getElementById("leads-container"),ic=document.getElementById("insights-container"),fb=document.getElementById("filter-bar");
+  const wpc=document.getElementById("winprob-container"),pc=document.getElementById("pitch-container");
+  // Show/hide containers
+  c.style.display=s.view==="leads"||s.view==="saved"?"block":"none";
+  ic.style.display=s.view==="insights"?"block":"none";
+  fb.style.display=s.view==="leads"||s.view==="saved"?"flex":"none";
+  wpc.style.display=s.view==="winprob"?"block":"none";
+  pc.style.display=s.view==="pitch"?"block":"none";
+  if(s.view==="insights"){ri();return}
+  if(s.view==="winprob"){renderWinProb();return}
+  if(s.view==="pitch"){renderPitch();return}
+  const ld=gf();
+  if(!ld.length){
+    c.innerHTML=`<div class="empty-state">${s.view==="saved"?"No saved leads yet — bookmark any lead to save it.":L.length===0?"Drop your AusIQ CSV above to load leads — tiers, sectors, signals and outreach angles will be generated automatically.":"No leads match your current filters."}</div>`;
+    return;
+  }
+  c.innerHTML=ld.map(l=>{
+    const ex=s.expanded===l.id, sv=s.saved.has(l.id);
+    const signalHtml = l.signal
+      ? `<span class="detail-status">${l.status}</span><br>${l.signal}`
+      : `<span class="detail-status">${l.status}</span><br><span style="color:var(--t-m);font-style:italic">AI enriching…</span>`;
+    const angleHtml = l.contactAngle || `<span style="color:var(--t-m);font-style:italic">AI enriching…</span>`;
+    // Save icon — clean bookmark SVG instead of star
+    const bookmarkSvg = sv
+      ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="#FD6826" xmlns="http://www.w3.org/2000/svg"><path d="M5 3h14a1 1 0 011 1v17l-7-3.5L6 21V4a1 1 0 011-1z"/></svg>`
+      : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.8" xmlns="http://www.w3.org/2000/svg"><path d="M5 3h14a1 1 0 011 1v17l-7-3.5L6 21V4a1 1 0 011-1z" stroke-linejoin="round"/></svg>`;
+    return`<div class="lead-card t${l.tier}${ex?" expanded":""}" data-id="${l.id}">
+<div class="lead-header" data-action="toggle" data-id="${l.id}">
+  <div class="lead-info">
+    <div class="lead-title-row">
+      <span class="lead-name">${l.company}</span>
+      <span class="lead-ticker">${l.ticker}</span>
+      <span class="lead-tier-badge t${l.tier}">${TL[l.tier]}</span>
+    </div>
+    <div class="lead-meta"><span>${l.sector}</span><span>MCap: ${l.mcap}</span><span>${l.hq}</span></div>
+  </div>
+  <span class="urgency-badge ${l.urgency}">${UL[l.urgency]}</span>
+  <button class="save-btn${sv?" saved":""}" data-action="save" data-id="${l.id}" title="${sv?'Unsave':'Save lead'}">${bookmarkSvg}</button>
+  <span class="chevron">▾</span>
+</div>
+<div class="lead-detail">
+  <div class="detail-grid">
+    <div class="detail-box signal"><div class="detail-label">Signal / Status</div>${signalHtml}</div>
+    <div class="detail-box angle"><div class="detail-label">Outreach Angle</div>${angleHtml}</div>
+  </div>
+  <div class="contact-box">
+    <div class="detail-label">Primary Contact ${l._emailSource==='found'?'<span style="color:#4ECDC4;font-size:9px;background:rgba(78,205,196,0.1);padding:1px 6px;border-radius:3px;margin-left:4px">✓ AI VERIFIED</span>':l._emailSource==="fallback"?'<span style="color:#F5B731;font-size:9px;background:rgba(245,183,49,0.08);padding:1px 6px;border-radius:3px;margin-left:4px">⚠ GENERIC</span>':''}</div>
+    <span class="contact-name">${l.contact}</span><br>
+    Email: ${fmtEmail(l.email)}${l.phone&&l.phone!=="via website"?` &nbsp;|&nbsp; Phone: ${l.phone}`:""}
+  </div>
+  <div class="detail-footer">
+    <span>Website: ${fmtWebsite(l.website)}</span>
+    <span style="cursor:pointer;color:var(--or)" data-action="go-pitch" data-id="${l.id}">→ Generate pitch email</span>
+  </div>
+</div>
+</div>`;
+  }).join("");
+}
+
+function ri(){
+  document.getElementById("insights-container").innerHTML=`<h2>2026 ASX Market Intelligence</h2>`+
+    I_data.map(x=>`<div class="insight-card"><div class="insight-title">${x.title}</div><div class="insight-body">${x.body}</div></div>`).join("");
+}
+
+function r(){rs();rsp();rtp();rn();rl()}
+
+// ── Event delegation ──────────────────────────────────────────────────────────
+document.getElementById("nav-tabs").addEventListener("click",e=>{
+  const b=e.target.closest(".nav-tab");if(!b)return;
+  s.view=b.dataset.view;s.expanded=null;r();
+});
+document.getElementById("search-input").addEventListener("input",e=>{s.search=e.target.value;rl()});
+document.getElementById("sector-pills").addEventListener("click",e=>{
+  const b=e.target.closest(".pill-btn");if(!b)return;s.sector=b.dataset.sector;rsp();rl();
+});
+document.getElementById("tier-pills").addEventListener("click",e=>{
+  const b=e.target.closest(".pill-btn");if(!b)return;s.tier=b.dataset.tier;rtp();rl();
+});
+document.getElementById("leads-container").addEventListener("click",e=>{
+  // Save/bookmark
+  const sb=e.target.closest('[data-action="save"]');
+  if(sb){e.stopPropagation();const id=parseInt(sb.dataset.id);s.saved.has(id)?s.saved.delete(id):s.saved.add(id);ss();rn();rl();return}
+  // → Go to pitch
+  const gp=e.target.closest('[data-action="go-pitch"]');
+  if(gp){e.stopPropagation();pitchSelectedId=parseInt(gp.dataset.id);s.view="pitch";r();return}
+  // Toggle expand
+  const h=e.target.closest('[data-action="toggle"]');
+  if(h){const id=parseInt(h.dataset.id);s.expanded=s.expanded===id?null:id;rl()}
+});
+
+// ── Win Probability Engine ────────────────────────────────────────────────────
+function calcWinProb(l) {
+  let score=0, tags=[];
+  const sig=(l.signal||'').toLowerCase(), ang=(l.contactAngle||'').toLowerCase();
+  const hasRel = sig.includes('alpine') || ang.includes('existing relationship') || ang.includes('warm follow');
+  if(hasRel){score+=30;tags.push({t:'Existing Alpine Relationship',c:'pos'});}
+  const goldS=['Gold Exploration','Gold Mining','Gold/Silver/Copper','Uranium','Critical Minerals','Rare Earths'];
+  const bioS=['Biotech','MedTech','Agritech / Biotech','Life Sciences','Healthcare'];
+  if(goldS.includes(l.sector)){score+=20;tags.push({t:'Core Sector (Resources)',c:'pos'});}
+  else if(bioS.includes(l.sector)){score+=14;tags.push({t:'Adjacent Sector (Health/Bio)',c:'pos'});}
+  else if(l.sector==='Energy / CSG'){score+=10;tags.push({t:'Sector Fit (Energy)',c:'neu'});}
+  else{score+=4;tags.push({t:'Non-Core Sector',c:'neg'});}
+  if(l.hq.includes('Perth')||l.hq.includes('WA')){score+=10;tags.push({t:'WA-Based (Home Turf)',c:'pos'});}
+  else if(l.hq.includes('AU')||l.hq.includes('VIC')||l.hq.includes('QLD')||l.hq.includes('NSW')||l.hq.includes('Australia')){score+=6;tags.push({t:'Domestic (AU)',c:'neu'});}
+  else{score+=2;tags.push({t:'International',c:'neg'});}
+  // Use numeric mcap if available
+  const mcapNum=l.mcapRaw||0;
+  if(mcapNum>0&&mcapNum<=50){score+=15;tags.push({t:'Sweet Spot Size',c:'pos'});}
+  else if(mcapNum>50&&mcapNum<=150){score+=10;tags.push({t:'Reachable Size',c:'neu'});}
+  else if(mcapNum>150){score+=3;tags.push({t:'Large Cap (Co-Manager Only)',c:'neg'});}
+  else{score+=8;}
+  if(l.urgency==='immediate'){score+=15;tags.push({t:'Immediate Need',c:'pos'});}
+  else if(l.urgency==='this_quarter'){score+=10;tags.push({t:'This Quarter',c:'neu'});}
+  else{score+=5;tags.push({t:'Pipeline (H2)',c:'neg'});}
+  // Cash cover signal
+  if(l.cashCover!==null&&l.cashCover!==undefined){
+    if(l.cashCover<=2){score+=10;tags.push({t:`Cash Cover ${l.cashCover}q — Urgent`,c:'pos'});}
+    else if(l.cashCover<=4){score+=6;tags.push({t:`Cash Cover ${l.cashCover}q — Near Term`,c:'neu'});}
+  }
+  score=Math.min(score,98);
+  const barColor=score>=70?'#FD6826':score>=45?'#F5B731':'#4ECDC4';
+  const pctColor=score>=70?'#FD6826':score>=45?'#F5B731':'rgba(255,255,255,0.5)';
+  return{score,tags,barColor,pctColor};
+}
+
+function renderWinProb(){
+  const wpc=document.getElementById('winprob-container');
+  let scored=L.map(l=>{const wp=calcWinProb(l);return{...l,wpScore:wp.score,wpTags:wp.tags,wpBarColor:wp.barColor,wpPctColor:wp.pctColor};});
+  scored.sort((a,b)=>b.wpScore-a.wpScore);
+  wpc.innerHTML=`<h2>Win Probability Analysis</h2>
+<p class="winprob-subtitle">Each lead scored against Alpine's historical profile — WA-based, small-cap resources, $5-15M raise size, existing relationships. Updated live when you drop a new CSV.</p>
+<div class="wp-method">
+<div class="wp-method-title">Scoring Methodology</div>
+<div class="wp-factors">
+<span class="wp-factor">Existing Relationship <span class="wt">30%</span></span>
+<span class="wp-factor">Sector Fit <span class="wt">20%</span></span>
+<span class="wp-factor">Cash Cover (Urgency) <span class="wt">15%</span></span>
+<span class="wp-factor">Raise Size Fit <span class="wt">15%</span></span>
+<span class="wp-factor">Timing / Urgency <span class="wt">10%</span></span>
+<span class="wp-factor">HQ Location <span class="wt">10%</span></span>
+</div>
+<div class="wp-note">Cash cover from IQ Cash Cover column used directly when available — the most reliable urgency signal in the dataset.</div>
+</div>`+
+  scored.map((l,i)=>`<div class="wp-card">
+<div class="wp-rank">#${i+1}</div>
+<div class="wp-info">
+<span class="wp-name">${l.company}<span class="wp-ticker">${l.ticker}</span></span>
+<div class="wp-meta">${l.sector} · ${l.hq} · MCap: ${l.mcap}${l.cashCover?` · Cash: ${l.cashCover}q`:''}</div>
+<div class="wp-breakdown">${l.wpTags.map(t=>`<span class="wp-tag ${t.c}">${t.t}</span>`).join('')}</div>
+</div>
+<div class="wp-score-area">
+<div class="wp-bar-track"><div class="wp-bar-fill" style="width:${l.wpScore}%;background:${l.wpBarColor}"></div></div>
+<div class="wp-pct" style="color:${l.wpPctColor}">${l.wpScore}%</div>
+</div>
+</div>`).join('');
+}
+
+// ── Email Pitch Engine ────────────────────────────────────────────────────────
+let pitchSelectedId=null;
+const ALPINE_DEALS=[
+  {name:"Novo Resources",size:"$8.2M",type:"Placement",role:"Joint Lead Manager",date:"Feb 2026",sector:"Gold Exploration"},
+  {name:"Amaero International",size:"$10M",type:"Capital Raise",role:"Lead Manager",date:"2025",sector:"Advanced Manufacturing"},
+  {name:"LTR Pharma",size:"$7M",type:"IPO",role:"Lead Manager",date:"2025",sector:"Biotech / Pharma"},
+  {name:"Litchfield Minerals",size:"IPO",type:"IPO",role:"Advisor",date:"2025",sector:"Uranium / Resources"}
+];
+function getBestDealRef(lead){
+  const goldS=['Gold Exploration','Gold Mining','Gold/Silver/Copper','Uranium','Critical Minerals','Rare Earths','Energy / CSG'];
+  const bioS=['Biotech','MedTech','Agritech / Biotech','Life Sciences','Healthcare'];
+  const isIPO=lead.ticker==='Pre-IPO'||lead.status.toLowerCase().includes('ipo');
+  if(goldS.includes(lead.sector)){return[ALPINE_DEALS[0],lead.sector==='Uranium'?ALPINE_DEALS[3]:ALPINE_DEALS[1]];}
+  if(bioS.includes(lead.sector)){return[ALPINE_DEALS[2],ALPINE_DEALS[1]];}
+  if(isIPO){return[ALPINE_DEALS[2],ALPINE_DEALS[3]];}
+  return[ALPINE_DEALS[1],ALPINE_DEALS[0]];
+}
+function generatePitchEmail(lead){
+  const deals=getBestDealRef(lead);
+  const isIPO=lead.ticker==='Pre-IPO'||lead.status.toLowerCase().includes('ipo');
+  const contactFirst=lead.contact.split(',')[0].split('(')[0].trim();
+  const firstName=contactFirst.includes('Dr ')?contactFirst:contactFirst.split(' ')[0];
+  const isGeneric=firstName==='Corporate'||firstName==='CEO'||firstName==='Investor'||firstName==='via'||!firstName;
+  const greeting=isGeneric?'Hi there':`Hi ${firstName}`;
+  const dealEvidence=deals.map(d=>`${d.name} (${d.size} ${d.type}, ${d.role})`).join(' and ');
+  let subject=isIPO?`Alpine Capital — ${lead.company} IPO Support`:`Alpine Capital — Capital Raising Support for ${lead.company}`;
+  let hook;
+  const sig=lead.signal||'';
+  if(sig.includes('Alpine Capital')){hook=`Following our recent work together, I wanted to reach out directly. As ${lead.company} moves into its next phase, Alpine is well-positioned to continue supporting your capital needs.`;}
+  else if(isIPO){hook=`I've been watching ${lead.company}'s progress closely and wanted to introduce Alpine Capital ahead of your planned listing. We specialise in getting ASX small-caps funded and listed — fast, and without the overhead of the big banks.`;}
+  else if(lead.cashCover&&lead.cashCover<=2){hook=`I'm reaching out because ${lead.company}'s current cash runway suggests a capital raise will be needed in the near term — and I'd like to put Alpine Capital on your radar before you're in market.`;}
+  else if(lead.status.includes('Active Raise')||lead.status.includes('Funding')){hook=`I understand ${lead.company} is progressing its capital raise strategy. Alpine Capital moves fast — from mandate to close in weeks, not months — and I wanted to put us on your radar.`;}
+  else{hook=`I wanted to introduce Alpine Capital to ${lead.company}'s team. We're a senior-led boutique focused on ASX small and mid-cap capital markets, and your story caught our attention as a strong fit for our investor network.`;}
+  const corePitch=`What makes Alpine different: we're deliberately small. No committees, no junior bankers running your deal, no being deprioritised when a bigger client calls. When we take a mandate, you deal directly with the people executing it. That means faster timelines and better outcomes.`;
+  const evidencePara=`We've recently completed ${dealEvidence}. Our track record in the ${lead.sector.toLowerCase()} space means we walk into the right rooms with credibility.`;
+  let valueAdd;
+  if(isIPO){valueAdd=`For your IPO, we offer end-to-end execution — offer structure, investor book, cornerstone introductions, and ASX liaison — all without the bloated timelines of a larger house.`;}
+  else if(lead.urgency==='immediate'||(lead.cashCover&&lead.cashCover<=2)){valueAdd=`Given your timeline, Alpine can move immediately. We maintain active relationships with institutional and sophisticated investor groups across Australian resources and emerging growth — we can have a term sheet in front of you within days of mandate.`;}
+  else{valueAdd=`Even if a raise isn't imminent, starting the conversation now means the groundwork is done — investor targeting, pricing benchmarking, and deal structure ready — so when the timing is right, execution is seamless.`;}
+  const cta=`Happy to jump on a quick call this week — no pitch deck required, just a conversation about what ${lead.company} has coming up.`;
+  const body=`${greeting},\n\n${hook}\n\n${corePitch}\n\n${evidencePara}\n\n${valueAdd}\n\n${cta}\n\nBest regards,\n[Your Name]\nAlpine Capital\nwww.alpinecapital.au`;
+  return{subject,body,to:lead.email,contact:lead.contact};
+}
+function renderPitch(){
+  const pc=document.getElementById('pitch-container');
+  if(!pitchSelectedId||!L.find(l=>l.id===pitchSelectedId))pitchSelectedId=L[0]?.id;
+  const lead=L.find(l=>l.id===pitchSelectedId);
+  if(!lead){pc.innerHTML=`<div class="pitch-empty">No leads loaded. Drop a CSV to get started.</div>`;return;}
+  const pitch=generatePitchEmail(lead);
+  pc.innerHTML=`<h2>Email Pitch Generator</h2>
+<p class="pitch-subtitle">AI-tailored outreach emails built from your CSV data — cash position, sector, urgency, and contact all factored in. Updated automatically when you load a new CSV.</p>
+<div class="pitch-select-bar">
+<select class="pitch-select" id="pitch-lead-select">
+${L.map(l=>`<option value="${l.id}"${l.id===pitchSelectedId?' selected':''}>${l.company} (${l.ticker})${l.cashCover?' · '+l.cashCover+'q cash':''}</option>`).join('')}
+</select>
+</div>
+<div class="pitch-email" id="pitch-email-card">
+<div class="pitch-email-header">
+<div class="pitch-field"><span class="pitch-field-label">To:</span><span class="pitch-field-value">${pitch.contact} &lt;${pitch.to}&gt;</span></div>
+<div class="pitch-field"><span class="pitch-field-label">Subject:</span><span class="pitch-subject">${pitch.subject}</span></div>
+</div>
+<div class="pitch-email-body" id="pitch-body-text">${pitch.body}</div>
+<div class="pitch-actions">
+<button class="pitch-copy-btn" id="pitch-copy-btn">Copy Email</button>
+<button class="pitch-regen-btn" id="pitch-mailto-btn">Open in Mail Client</button>
+</div>
+</div>
+<div class="pitch-tip">
+<div class="pitch-tip-title">Pitch Strategy Notes</div>
+<strong>Why this works:</strong> The hook is built from the company's actual financial situation — cash runway, raise status, and urgency — pulled directly from your CSV. Each email references Alpine's most relevant completed deal for instant credibility. The CTA is low-friction to maximise response rate.<br><br>
+<strong>Before sending:</strong> Add the contact's first name if generic, personalise the sign-off, and drop in one line referencing their most recent ASX announcement to show you've done the work.
+</div>`;
+  document.getElementById('pitch-lead-select').addEventListener('change',e=>{pitchSelectedId=parseInt(e.target.value);renderPitch();});
+  document.getElementById('pitch-copy-btn').addEventListener('click',()=>{
+    const text=document.getElementById('pitch-body-text').textContent;
+    navigator.clipboard.writeText('Subject: '+pitch.subject+'\n\n'+text).then(()=>{
+      const btn=document.getElementById('pitch-copy-btn');btn.textContent='Copied!';btn.classList.add('copied');
+      setTimeout(()=>{btn.textContent='Copy Email';btn.classList.remove('copied');},2000);
+    });
+  });
+  document.getElementById('pitch-mailto-btn').addEventListener('click',()=>{
+    const mailTo=pitch.to.startsWith('via ')||!pitch.to?'':pitch.to;
+    window.open('mailto:'+mailTo+'?subject='+encodeURIComponent(pitch.subject)+'&body='+encodeURIComponent(pitch.body),'_blank');
+  });
+}
+
+// ── AusIQ CSV Import Engine ───────────────────────────────────────────────────
+const DEFAULT_L=[];
+
+// Sector inference from company name + payment patterns
+function inferSector(name, ticker, payments) {
+  const hay=(name+' '+ticker).toLowerCase();
+  // Payment-based signals (most reliable)
+  if(payments.rnd>0&&payments.mfg>0)return'Biotech';
+  if(payments.rnd>0&&payments.explor===0)return'Biotech';
+  if(payments.explor>0&&payments.rnd===0){
+    if(hay.includes('gold')||hay.includes('kingsrose')||hay.includes('iceni')||hay.includes('hamelin')||hay.includes('mountain gold')||hay.includes('e79'))return'Gold Mining';
+    if(hay.includes('uranium')||hay.includes('nuclear'))return'Uranium';
+    if(hay.includes('rare earth')||hay.includes(' ree')||hay.includes('heavy rare'))return'Rare Earths';
+    if(hay.includes('lithium')||hay.includes('battery')||hay.includes('critical')||hay.includes('graphite'))return'Critical Minerals';
+    if(hay.includes('copper')||hay.includes('nickel')||hay.includes('cobalt')||hay.includes('zinc')||hay.includes('magnetite')||hay.includes('iron'))return'Mining/Resources';
+    return'Gold Mining'; // default for explorers
+  }
+  // Name-based fallback
+  if(hay.includes('gold'))return'Gold Mining';
+  if(hay.includes('uranium'))return'Uranium';
+  if(hay.includes('rare earth')||hay.includes('heavy rare'))return'Rare Earths';
+  if(hay.includes('energy'))return'Energy / CSG';
+  if(hay.includes('lithium')||hay.includes('graphite')||hay.includes('critical'))return'Critical Minerals';
+  if(hay.includes('tech')||hay.includes('digital'))return'Technology / AdTech';
+  if(hay.includes('health')||hay.includes('pharma')||hay.includes('med'))return'Healthcare';
+  if(hay.includes('mineral')||hay.includes('mining')||hay.includes('metal')||hay.includes('resource'))return'Mining/Resources';
+  return'Mining/Resources'; // This CSV is all resources
+}
+
+// Tier from cash cover (IQ Cash Cover) + proceeds
+function deriveTier(cashCover, proceeds, burnRate) {
+  // Tier 1: critical cash (<2q) or just raised (proceeds > 0 recently)
+  if(cashCover!==null&&cashCover<=1.5)return 1;
+  if(cashCover!==null&&cashCover<=3)return 1;
+  if(proceeds>3000)return 1; // raised >$3M recently
+  if(proceeds>0)return 2;
+  if(cashCover!==null&&cashCover<=6)return 2;
+  return 3;
+}
+
+// Urgency from cash cover
+function deriveUrgency(cashCover, proceeds) {
+  if(cashCover!==null&&cashCover<=2)return'immediate';
+  if(cashCover!==null&&cashCover<=4)return'this_quarter';
+  if(proceeds>0)return'this_quarter'; // just raised — follow-on likely this half
+  return'this_half';
+}
+
+// Status label from financials
+function deriveStatus(cashCover, proceeds, burnRate) {
+  if(proceeds>5000)return`HOT — Just Raised $${(proceeds/1000).toFixed(1)}M`;
+  if(proceeds>1000)return`WARM — Recently Raised $${(proceeds/1000).toFixed(1)}M`;
+  if(cashCover!==null&&cashCover<0)return'CRITICAL — Cash Negative';
+  if(cashCover!==null&&cashCover<=1.5)return'HOT — Under 2 Quarters Cash';
+  if(cashCover!==null&&cashCover<=3)return'WARM — Sub 3 Quarter Runway';
+  if(cashCover!==null&&cashCover<=5)return'WARM — Raise Due This Year';
+  return'PIPELINE — Monitoring';
+}
+
+// Parse contacts field: "email (Name, Title): email2 (Name2, Title2)"
+function parseContacts(raw) {
+  if(!raw||!raw.trim())return{contact:'Corporate enquiries',email:'via website',phone:'via website'};
+  // Split on ): or ); 
+  const parts = raw.split(/\)\s*[:;]\s*/).map(p=>p.trim()).filter(Boolean);
+  const first = parts[0];
+  // Extract email
+  const emailMatch = first.match(/^([^\s(]+@[^\s(]+)/);
+  const email = emailMatch ? emailMatch[1] : 'via website';
+  // Extract name + title
+  const parenMatch = first.match(/\(([^)]+)\)/);
+  const contact = parenMatch ? parenMatch[1].trim() : 'Corporate enquiries';
+  return{contact,email,phone:'via website'};
+}
+
+// Infer website from company name
+function inferWebsite(company, ticker) {
+  const slug=company.toLowerCase()
+    .replace(/\s+(ltd|limited|corp|corporation|inc|pty|group|holdings?|resources?|minerals?|mining|metals?|exploration|technologies?|tech|sciences?|pharmaceuticals?|pharma|nl|plc)\b/g,'')
+    .replace(/[^a-z0-9]+/g,'').trim();
+  return slug ? `https://${slug}.com.au` : '';
+}
+
+// Non-company filter: must have ticker 2-5 chars, company name contains known corp suffix
+function isValidCompany(ticker, company) {
+  if(!ticker||ticker.length<2||ticker.length>5)return false;
+  if(!company||company.trim().length<3)return false;
+  // Must look like a company name
+  const corpWords=['limited','ltd','corp','nl','plc','pty','inc','group','resources','minerals','mining','metals','exploration','technologies','energy','pharma'];
+  const cn=company.toLowerCase();
+  return corpWords.some(w=>cn.includes(w))||cn.split(' ').length>=2;
+}
+
+function parseAusIQ(text) {
+  const lines=text.trim().split(/\r?\n/).filter(l=>l.trim());
+  if(lines.length<2)return null;
+  // Parse header — strip BOM
+  const rawHeaders=lines[0].replace(/^\uFEFF/,'');
+  const headers=rawHeaders.split(',').map(h=>h.trim().replace(/^"|"$/g,''));
+  const hi={};
+  headers.forEach((h,i)=>{hi[h]=i;});
+  // Check it's an AusIQ-style file
+  const isAusIQ=hi['Ticker']!==undefined&&hi['IQ Cash Cover']!==undefined;
+  if(!isAusIQ)return null;
+  const results=[];
+  for(let i=1;i<lines.length;i++){
+    // CSV parse with quoted fields
+    const cols=[];let cur='',inQ=false;
+    for(const ch of lines[i]+','){
+      if(ch==='"'){inQ=!inQ;}
+      else if(ch===','&&!inQ){cols.push(cur.trim());cur='';}
+      else cur+=ch;
+    }
+    const g=(k,def='')=>(hi[k]!==undefined&&cols[hi[k]]!==undefined)?cols[hi[k]].replace(/^"|"$/g,'').trim()||def:def;
+    const ticker=g('Ticker');
+    const company=g('Company Name');
+    if(!isValidCompany(ticker,company))continue;
+    const mcapRaw=parseFloat(g('Market Cap','0'))||0;
+    const cashCover=parseFloat(g('IQ Cash Cover',''))||null;
+    const proceeds=parseFloat(g('Proceeds','0'))||0;
+    const burnRaw=parseFloat(g('IQ Cash Flow','0'))||0;
+    const payments={
+      explor:Math.abs(parseFloat(g('payments_for_exploration_and_evaluation','0'))||0),
+      dev:Math.abs(parseFloat(g('payments_for_development','0'))||0),
+      rnd:Math.abs(parseFloat(g('payments_for_research_and_development','0'))||0),
+      mfg:Math.abs(parseFloat(g('payments_for_product_manufacturing_and_operating_costs','0'))||0),
+    };
+    const sector=inferSector(company,ticker,payments);
+    const tier=deriveTier(cashCover,proceeds,burnRaw);
+    const urgency=deriveUrgency(cashCover,proceeds);
+    const status=deriveStatus(cashCover,proceeds,burnRaw);
+    const {contact,email,phone}=parseContacts(g('contacts',''));
+    const website=inferWebsite(company,ticker);
+    const mcapStr=mcapRaw?`$${mcapRaw}M`:'N/A';
+    // Title-case company name
+    const companyClean=company.split(' ').map(w=>w.charAt(0)+w.slice(1).toLowerCase()).join(' ');
+    results.push({
+      id:i,company:companyClean,ticker,sector,
+      mcap:mcapStr,mcapRaw,
+      status,signal:null,contactAngle:null,
+      tier,urgency,
+      cashCover:cashCover!==null?Math.round(cashCover*10)/10:null,
+      proceeds,
+      website,hq:'Australia',
+      contact,email,phone,
+      _needsAI:true
+    });
+  }
+  return results.length?results:null;
+}
+
+
+// Determine if a contact email is generic and needs upgrading
+function isGenericEmail(email) {
+  if(!email||email.startsWith('via '))return true;
+  const generic=['info@','contact@','admin@','hello@','enquiries@','office@','mail@','corporate@','reception@'];
+  return generic.some(g=>email.toLowerCase().startsWith(g));
+}
+
+// FAST PASS — signal + outreach via Haiku, no web search, ~300ms per call
+async function enrichFast(lead) {
+  const cashNote=lead.cashCover!==null?`Cash cover: ${lead.cashCover}q remaining.`:'';
+  const proceedsNote=lead.proceeds>0?`Recently raised $${(lead.proceeds/1000).toFixed(1)}M.`:'';
+  const prompt=`ASX capital markets analyst at Alpine Capital. Write two things for this lead. Be specific and cite exact figures.
+
+${lead.company} (ASX:${lead.ticker}) | ${lead.sector} | MCap ${lead.mcap} | ${lead.status}
+${cashNote} ${proceedsNote}
+
+Respond with JSON only, no markdown:
+{"signal":"2-3 sentences explaining WHY this is a capital raising opportunity right now — cite cash runway or proceeds figures","contactAngle":"1-2 sentences — exactly what Alpine should offer and why the timing matters"}`;
+  try {
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:280,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await resp.json();
+    const raw=(data.content?.filter(c=>c.type==='text').map(c=>c.text||'').join('')||'').replace(/```json[\s\S]*?```|```/g,'').trim();
+    const m=raw.match(/\{[\s\S]*\}/);
+    if(m){const p=JSON.parse(m[0]);if(p.signal)lead.signal=p.signal;if(p.contactAngle)lead.contactAngle=p.contactAngle;}
+  } catch(e){
+    lead.signal=`${lead.company} (${lead.ticker}) — ${lead.sector}, MCap ${lead.mcap}.${lead.cashCover?' Cash cover '+lead.cashCover+'q.'+(lead.cashCover<=3?' Raise likely imminent.':''):''} ${lead.proceeds>0?'Raised $'+(lead.proceeds/1000).toFixed(1)+'M this quarter.':''}`;
+    lead.contactAngle=`Reach out to ${lead.contact} to offer Alpine's placement services.${lead.cashCover&&lead.cashCover<=3?' Timing is urgent.':''}`;
+  }
+  lead._needsAI=false;
+  return lead;
+}
+
+// SLOW PASS — website + contact upgrade via web search, runs after fast pass in background
+async function enrichWebSearch(lead) {
+  const hasGoodEmail=!isGenericEmail(lead.email);
+  const contactInstruction=hasGoodEmail
+    ?`Contact email already specific (${lead.email}) — keep as-is.`
+    :`CSV has generic email (${lead.email}). Find MD or CEO direct email or IR contact from their website or ASX announcements. Priority: MD/CEO > IR > info@.`;
+  const prompt=`For ASX company ${lead.company} (ASX:${lead.ticker}) find:
+1. Their real official website URL
+2. ${contactInstruction}
+JSON only: {"website":"https://...","contact":"Name, Title","email":"email@domain.com","emailSource":"csv|found|fallback"}`;
+  try {
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-haiku-4-5-20251001',max_tokens:200,
+        tools:[{type:'web_search_20250305',name:'web_search'}],
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await resp.json();
+    const raw=(data.content?.filter(c=>c.type==='text').map(c=>c.text||'').join('')||'').replace(/```json[\s\S]*?```|```/g,'').trim();
+    const m=raw.match(/\{[\s\S]*\}/);
+    if(m){
+      const p=JSON.parse(m[0]);
+      if(p.website&&p.website.startsWith('http'))lead.website=p.website;
+      if(p.email&&p.email.includes('@')&&!p.email.startsWith('via ')){
+        if(!hasGoodEmail||p.emailSource==='found'){
+          lead.email=p.email;if(p.contact)lead.contact=p.contact;
+          lead._emailSource=p.emailSource||'found';
+        }
+      }
+    }
+  } catch(e){/* keep existing */}
+  return lead;
+}
+
+function showCsvStatus(msg,type,showClear){
+  const el=document.getElementById('csv-status'),cb=document.getElementById('csv-clear-btn');
+  el.textContent=msg;el.className='csv-status '+type;
+  el.style.display=msg?'inline-block':'none';cb.style.display=showClear?'inline-block':'none';
+}
+
+async function applyCSV(file){
+  if(!file||!file.name.endsWith('.csv')){showCsvStatus('⚠ Please drop a .csv file','err',false);return;}
+  showCsvStatus('⏳ Parsing…','loading',false);
+  const reader=new FileReader();
+  reader.onload=async e=>{
+    const parsed=parseAusIQ(e.target.result);
+    if(!parsed){showCsvStatus('⚠ Could not parse — ensure this is an AusIQ export with Ticker & IQ Cash Cover columns','err',false);return;}
+    L.length=0;parsed.forEach(x=>L.push(x));
+    s.expanded=null;pitchSelectedId=null;s.sector='All';s.tier='All';
+    r();
+    const total=parsed.length;
+    showCsvStatus(`✓ ${total} leads loaded · writing signals…`,'loading',false);
+
+    // FAST PASS — Haiku, no web search, batches of 10, fills signal+outreach quickly
+    for(let i=0;i<parsed.length;i+=10){
+      const batch=parsed.slice(i,i+10);
+      await Promise.all(batch.map(lead=>enrichFast(lead)));
+      r();
+      const pct=Math.round(Math.min(i+10,total)/total*100);
+      showCsvStatus(`✓ ${total} leads · writing signals ${pct}%…`,'loading',false);
+    }
+    showCsvStatus(`✓ ${total} leads · verifying websites & contacts…`,'loading',false);
+    r();
+
+    // SLOW PASS — web search for websites + contacts, batches of 6, runs after fast pass
+    // Fire-and-forget: re-render after each batch so updates appear live
+    (async()=>{
+      for(let i=0;i<parsed.length;i+=6){
+        const batch=parsed.slice(i,i+6);
+        await Promise.all(batch.map(lead=>enrichWebSearch(lead)));
+        r();
+      }
+      showCsvStatus(`✓ ${total} leads from ${file.name} · fully enriched`,'ok',true);
+      r();
+    })();
+  };
+  reader.readAsText(file);
+}
+
+const dz=document.getElementById('csv-drop-zone');
+dz.addEventListener('click',()=>document.getElementById('csv-file-input').click());
+document.getElementById('csv-file-input').addEventListener('change',e=>{if(e.target.files[0])applyCSV(e.target.files[0]);});
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');applyCSV(e.dataTransfer.files[0]);});
+document.getElementById('csv-clear-btn').addEventListener('click',e=>{
+  e.stopPropagation();
+  L.length=0;DEFAULT_L.forEach(x=>L.push({...x}));
+  s.expanded=null;pitchSelectedId=null;s.sector='All';s.tier='All';
+  r();showCsvStatus('','',false);document.getElementById('csv-file-input').value='';
+});
+
+r();
+</script>
+</body>
+</html>
